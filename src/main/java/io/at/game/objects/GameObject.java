@@ -108,21 +108,8 @@ public class GameObject {
      * Accelerate object.
      */
     void accelerate() {
-        if (Math.abs(speedX) < CharacterConstants.CHARACTER_RUN_MAX_SPEED) {
-            speedX += accelerationX;
-        } else if (speedX > CharacterConstants.CHARACTER_RUN_MAX_SPEED) {
-            speedX = CharacterConstants.CHARACTER_RUN_MAX_SPEED;
-        } else if (speedX < -CharacterConstants.CHARACTER_RUN_MAX_SPEED) {
-            speedX = -CharacterConstants.CHARACTER_RUN_MAX_SPEED;
-        }
-
-        if (Math.abs(speedY) < CharacterConstants.CHARACTER_RUN_MAX_SPEED) {
-            speedY += accelerationY;
-        } else if (speedY > CharacterConstants.CHARACTER_RUN_MAX_SPEED) {
-            speedY = CharacterConstants.CHARACTER_RUN_MAX_SPEED;
-        } else if (speedY < -CharacterConstants.CHARACTER_RUN_MAX_SPEED) {
-            speedY = -CharacterConstants.CHARACTER_RUN_MAX_SPEED;
-        }
+        speedX += accelerationX;
+        speedY += accelerationY;
     }
 
     /**
