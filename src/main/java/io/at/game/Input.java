@@ -72,11 +72,14 @@ class Input implements MouseListener, MouseMotionListener, KeyListener, Runnable
 
                 if (Game.isPaused()) {
                     //TODO
-                    
+
+                //Accelerating y-axis
                 } else if (keys.get(KeyEvent.VK_W) || keys.get(KeyEvent.VK_UP)) {
                     Game.player().setAcceleration(Game.player().getAccelerationX(), -CharacterConstants.CHARACTER_RUN_ACCELERATION);
                 } else if (keys.get(KeyEvent.VK_S) || keys.get(KeyEvent.VK_DOWN)) {
                     Game.player().setAcceleration(Game.player().getAccelerationX(), CharacterConstants.CHARACTER_RUN_ACCELERATION);
+
+                //Breaking y-axis
                 } else if (Game.player().getSpeedY() > 0) {
                     Game.player().setAcceleration(Game.player().getAccelerationX(), -CharacterConstants.CHARACTER_RUN_BREAKING);
                 } else if (Game.player().getSpeedY() < 0) {
@@ -85,10 +88,13 @@ class Input implements MouseListener, MouseMotionListener, KeyListener, Runnable
                     Game.player().setAcceleration(Game.player().getAccelerationX(), 0);
                 }
 
+                //Accelerating x-axis
                 if (keys.get(KeyEvent.VK_A) || keys.get(KeyEvent.VK_LEFT)) {
                     Game.player().setAcceleration(-CharacterConstants.CHARACTER_RUN_ACCELERATION, Game.player().getAccelerationY());
                 } else if (keys.get(KeyEvent.VK_D) || keys.get(KeyEvent.VK_RIGHT)) {
                     Game.player().setAcceleration(CharacterConstants.CHARACTER_RUN_ACCELERATION, Game.player().getAccelerationY());
+
+                //Breaking x-axis
                 } else if (Game.player().getSpeedX() > 0) {
                     Game.player().setAcceleration(-CharacterConstants.CHARACTER_RUN_BREAKING, Game.player().getAccelerationY());
                 } else if (Game.player().getSpeedX() < 0) {
@@ -101,6 +107,7 @@ class Input implements MouseListener, MouseMotionListener, KeyListener, Runnable
                 Game.stop(Game.PLAYER_IS_NULL_ERROR);
             }
 
+            //Delay
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {

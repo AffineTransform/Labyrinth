@@ -137,6 +137,7 @@ public final class Game implements Runnable {
                 }
             }
 
+            //Delay
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
