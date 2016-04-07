@@ -1,7 +1,5 @@
 package io.at.game.objects;
 
-import io.at.game.Game;
-
 import javax.imageio.ImageIO;
 import java.awt.Image;
 import java.awt.Graphics2D;

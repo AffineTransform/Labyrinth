@@ -16,8 +16,6 @@ public class DynamicsCalculator {
             for (GameObject o : objects) {
                 o.move();
                 o.accelerate();
-
-                System.out.println("vx:" + o.getSpeedX() + ", vy:" + o.getSpeedY() + " ---- ax:" + o.getAccelerationX() + ", ay:" + o.getAccelerationY());
             }
         } catch (NullPointerException e) {
             Game.stop(Game.OBJECTS_ARRAY_IS_NULL_ERROR);

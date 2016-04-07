@@ -124,7 +124,8 @@ public final class Game implements Runnable {
             try {
                 calculator.calculate(loadedObjects);
                 screen.render(loadedObjects);
-                window.setTitle(TITLE + " " + VERSION + " (" + loadedObjects[0].getX() + ", " + loadedObjects[0].getY() + ")");//TODO
+                //TODO
+                window.setTitle(TITLE + " " + VERSION + " (" + loadedObjects[0].getX() + ", " + loadedObjects[0].getY() + ")");
 
             } catch (NullPointerException e) {
                 if (screen == null) {
