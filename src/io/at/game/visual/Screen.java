@@ -6,7 +6,9 @@ import io.at.game.objects.GameObject;
 
 import java.awt.Canvas;
 import java.awt.Graphics2D;
+import java.awt.Color;
 import java.awt.image.BufferStrategy;
+import java.util.Vector;
 
 /**
  * Screen class needed for drawing an image on window.
@@ -24,10 +26,12 @@ public class Screen extends Canvas {
 
     /**
      * Render image on screen.
+     * @param mouseX - mouse coordinate.
+     * @param mouseY - mouse coordinate.
      * @param decorations - array of game decoration.
      * @param objects - array of game objects.
      */
-    public void render(final Decoration[] decorations, final GameObject[] objects) {
+    public void render(final int mouseX, final int mouseY, final Vector<Decoration> decorations, final Vector<GameObject> objects) {
         BufferStrategy bs = getBufferStrategy();
         if (bs == null) {
             createBufferStrategy(2);
@@ -51,6 +55,10 @@ public class Screen extends Canvas {
                 Game.stop(Game.OBJECTS_ARRAY_IS_NULL_ERROR);
             }
         }
+        g.setColor(Color.darkGray);
+        g.fillOval(mouseX - 2, mouseY - 2, 5, 5);
+        g.setColor(Color.black);
+        g.drawOval(mouseX - 2, mouseY - 2, 5, 5);
 
         g.dispose();
         bs.show();

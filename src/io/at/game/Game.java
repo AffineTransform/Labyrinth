@@ -8,6 +8,7 @@ import io.at.game.visual.Screen;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Vector;
 
 /**
  * Main game class.
@@ -24,17 +25,18 @@ public final class Game implements Runnable {
 
     //Non-constant values
     private Screen screen;
+    private Input input;
     private Window window;
     private DynamicsCalculator calculator;
-    private static Decoration[] loadedDecorations;
-    private static GameObject[] loadedObjects;
+    private static Vector<Decoration> loadedDecorations;
+    private static Vector<GameObject> loadedObjects;
 
     /**
      * Player accessor.
      * @return player
      */
     static GameObject player() {
-        return loadedObjects[0];
+        return loadedObjects.get(0);
     }
 
 
@@ -85,7 +87,7 @@ public final class Game implements Runnable {
         paused = false;
         exitCode = 0;
 
-        Input input = new Input();
+        input = new Input();
         screen = new Screen(WIDTH, HEIGHT);
         screen.addKeyListener(input);
         screen.addMouseListener(input);
@@ -93,27 +95,16 @@ public final class Game implements Runnable {
         window = new Window(screen, TITLE + " " + VERSION);
 
         calculator = new DynamicsCalculator();
+        loadedDecorations = new Vector<>();
+        loadedObjects = new Vector<>();
 
         try {
-            loadedDecorations = new Decoration[] {
-                new Decoration(0, 0, CLASS_PATH + "sprites/ground/grass_0.png"),
-                new Decoration(200, 0, CLASS_PATH + "sprites/ground/grass_0.png"),
-                new Decoration(400, 0, CLASS_PATH + "sprites/ground/grass_0.png"),
-                new Decoration(600, 0, CLASS_PATH + "sprites/ground/grass_0.png"),
-
-                new Decoration(0, 200, CLASS_PATH + "sprites/ground/grass_0.png"),
-                new Decoration(200, 200, CLASS_PATH + "sprites/ground/grass_0.png"),
-                new Decoration(400, 200, CLASS_PATH + "sprites/ground/grass_0.png"),
-                new Decoration(600, 200, CLASS_PATH + "sprites/ground/grass_0.png"),
-
-                new Decoration(0, 400, CLASS_PATH + "sprites/ground/grass_0.png"),
-                new Decoration(200, 400, CLASS_PATH + "sprites/ground/grass_0.png"),
-                new Decoration(400, 400, CLASS_PATH + "sprites/ground/grass_0.png"),
-                new Decoration(600, 400, CLASS_PATH + "sprites/ground/grass_0.png")
-            };
-            loadedObjects = new GameObject[] {
-                new GameObject("Kant", 0, 0, CLASS_PATH + "sprites/hero/hero_0.png")
-            };
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    loadedDecorations.add(new Decoration(200 * i, 200 * j, CLASS_PATH + "sprites/ground/grass_0.png"));
+                }
+            }
+            loadedObjects.add(new GameObject("Kant", 0, 0, CLASS_PATH + "sprites/hero/hero_0.png"));
         } catch (FileNotFoundException e) {
             Game.stop(Game.FILE_NOT_FOUND_ERROR);
         } catch (IOException e) {
@@ -134,9 +125,7 @@ public final class Game implements Runnable {
 
             try {
                 calculator.calculate(loadedObjects);
-                screen.render(loadedDecorations, loadedObjects);
-                //TODO
-                window.setTitle(TITLE + " " + VERSION + " (" + loadedObjects[0].getX() + ", " + loadedObjects[0].getY() + ")");
+                screen.render(input.getX(), input.getY(), loadedDecorations, loadedObjects);
 
             } catch (NullPointerException e) {
                 if (screen == null) {
