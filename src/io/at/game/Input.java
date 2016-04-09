@@ -109,6 +109,40 @@ class Input implements MouseListener, MouseMotionListener, KeyListener, Runnable
                     Game.player().setAcceleration(0, Game.player().getAccelerationY());
                 }
 
+                //Rotating character
+                int heroCenterX = Game.player().getX() + Game.player().getWidth() / 2 + 1;
+                int heroCenterY = Game.player().getY() + Game.player().getHeight() / 2 + 1;
+
+                if (mouseY < heroCenterY && mouseX == heroCenterX) {
+                    Game.player().setAngle(Math.toRadians(0));
+                } else if (mouseY < heroCenterY && mouseX > heroCenterX) {
+                    Game.player().setAngle(Math.PI / 2 - Math.atan2(
+                            Math.abs(mouseY - heroCenterY),
+                            Math.abs(mouseX - heroCenterX)
+                    ));
+                } else if (mouseY == heroCenterY && mouseX > heroCenterX) {
+                    Game.player().setAngle(Math.toRadians(90));
+                } else if (mouseY > heroCenterY && mouseX > heroCenterX) {
+                    Game.player().setAngle(Math.PI / 2 + Math.atan2(
+                            Math.abs(mouseY - heroCenterY),
+                            Math.abs(mouseX - heroCenterX)
+                    ));
+                } else if (mouseY > heroCenterY && mouseX == heroCenterX) {
+                    Game.player().setAngle(Math.toRadians(180));
+                } else if (mouseY > heroCenterY && mouseX < heroCenterX) {
+                    Game.player().setAngle(Math.PI * 3 / 2 - Math.atan2(
+                            Math.abs(mouseY - heroCenterY),
+                            Math.abs(mouseX - heroCenterX)
+                    ));
+                } else if (mouseY == heroCenterY && mouseX < heroCenterX) {
+                    Game.player().setAngle(Math.toRadians(270));
+                } else if (mouseY < heroCenterY && mouseX < heroCenterX) {
+                    Game.player().setAngle(Math.PI * 3 / 2 + Math.atan2(
+                            Math.abs(mouseY - heroCenterY),
+                            Math.abs(mouseX - heroCenterX)
+                    ));
+                }
+
             } catch (NullPointerException e) {
                 Game.stop(Game.PLAYER_IS_NULL_ERROR);
             }

@@ -50,6 +50,12 @@ public class GameObject {
     public int getY() {
         return y;
     }
+    public int getWidth() {
+        return width;
+    }
+    public int getHeight() {
+        return height;
+    }
     public double getSpeedX() {
         return speedX;
     }
