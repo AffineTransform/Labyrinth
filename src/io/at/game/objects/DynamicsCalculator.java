@@ -1,5 +1,6 @@
 package io.at.game.objects;
 
+import io.at.game.ErrorCodes;
 import io.at.game.Game;
 
 import java.util.Vector;
@@ -20,7 +21,7 @@ public class DynamicsCalculator {
                 o.accelerate();
             }
         } catch (NullPointerException e) {
-            Game.stop(Game.OBJECTS_ARRAY_IS_NULL_ERROR);
+            Game.stop(ErrorCodes.OBJECTS_ARRAY_IS_NULL_ERROR);
         }
     }
 }

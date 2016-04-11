@@ -25,7 +25,8 @@ public final class Game implements Runnable {
 
     //Non-constant values
     private Screen screen;
-    private Input input;
+    private KeyInput keyInput;
+    private MouseInput mouseInput;
     private Window window;
     private DynamicsCalculator calculator;
     private static Vector<Decoration> loadedDecorations;
@@ -50,19 +51,19 @@ public final class Game implements Runnable {
      */
     public static void stop(final int errorCode) {
         exitCode = errorCode;
-        if (exitCode == SCREEN_IS_NULL_ERROR) {
+        if (exitCode == ErrorCodes.SCREEN_IS_NULL_ERROR) {
             System.err.println("Screen variable is null!");
-        } else if (exitCode == CALCULATOR_IS_NULL_ERROR) {
+        } else if (exitCode == ErrorCodes.CALCULATOR_IS_NULL_ERROR) {
             System.err.println("Dynamics calculator is null!");
-        } else if (exitCode == OBJECTS_ARRAY_IS_NULL_ERROR) {
+        } else if (exitCode == ErrorCodes.OBJECTS_ARRAY_IS_NULL_ERROR) {
             System.err.println("Objects array is null!");
-        } else if (exitCode == PLAYER_IS_NULL_ERROR) {
+        } else if (exitCode == ErrorCodes.PLAYER_IS_NULL_ERROR) {
             System.err.println("Player is null!");
-        } else if (errorCode == THREAD_WAS_INTERRUPTED_ERROR) {
+        } else if (errorCode == ErrorCodes.THREAD_WAS_INTERRUPTED_ERROR) {
             System.err.println("Thread was interrupted!");
-        } else if (errorCode == FILE_READING_ERROR) {
+        } else if (errorCode == ErrorCodes.FILE_READING_ERROR) {
             System.err.println("Error while reading sprite!");
-        } else if (errorCode == FILE_NOT_FOUND_ERROR) {
+        } else if (errorCode == ErrorCodes.FILE_NOT_FOUND_ERROR) {
             System.err.println("File wasn't found!");
         }
         running = false;
@@ -73,6 +74,11 @@ public final class Game implements Runnable {
      */
     static void switchPause() {
         paused = !paused;
+        if (paused) {
+            System.out.println("Paused!");
+        } else {
+            System.out.println("Unpaused!");
+        }
     }
 
     static boolean isPaused() {
@@ -85,13 +91,14 @@ public final class Game implements Runnable {
     Game() {
         running = true;
         paused = false;
-        exitCode = 0;
+        exitCode = ErrorCodes.EVERYTHING_IS_OK;
 
-        input = new Input();
+        keyInput = new KeyInput();
+        mouseInput = new MouseInput();
         screen = new Screen(WIDTH, HEIGHT);
-        screen.addKeyListener(input);
-        screen.addMouseListener(input);
-        screen.addMouseMotionListener(input);
+        screen.addKeyListener(keyInput);
+        screen.addMouseListener(mouseInput);
+        screen.addMouseMotionListener(mouseInput);
         window = new Window(screen, TITLE + " " + VERSION);
 
         calculator = new DynamicsCalculator();
@@ -106,13 +113,14 @@ public final class Game implements Runnable {
             }
             loadedObjects.add(new GameObject("Kant", 0, 0, CLASS_PATH + "sprites/hero/hero_0.png"));
         } catch (FileNotFoundException e) {
-            Game.stop(Game.FILE_NOT_FOUND_ERROR);
+            Game.stop(ErrorCodes.FILE_NOT_FOUND_ERROR);
         } catch (IOException e) {
-            Game.stop(Game.FILE_READING_ERROR);
+            Game.stop(ErrorCodes.FILE_READING_ERROR);
         }
 
         new Thread(this).start();
-        new Thread(input).start();
+        new Thread(mouseInput).start();
+        new Thread(keyInput).start();
     }
 
     /**
@@ -125,15 +133,15 @@ public final class Game implements Runnable {
 
             try {
                 calculator.calculate(loadedObjects);
-                screen.render(input.getX(), input.getY(), loadedDecorations, loadedObjects);
+                screen.render(mouseInput.getX(), mouseInput.getY(), loadedDecorations, loadedObjects);
 
             } catch (NullPointerException e) {
                 if (screen == null) {
-                    stop(SCREEN_IS_NULL_ERROR);
+                    stop(ErrorCodes.SCREEN_IS_NULL_ERROR);
                 } else if (calculator == null) {
-                    stop(CALCULATOR_IS_NULL_ERROR);
+                    stop(ErrorCodes.CALCULATOR_IS_NULL_ERROR);
                 } else if (loadedObjects == null) {
-                    stop(OBJECTS_ARRAY_IS_NULL_ERROR);
+                    stop(ErrorCodes.OBJECTS_ARRAY_IS_NULL_ERROR);
                 }
             }
 
@@ -141,24 +149,10 @@ public final class Game implements Runnable {
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                stop(THREAD_WAS_INTERRUPTED_ERROR);
+                stop(ErrorCodes.THREAD_WAS_INTERRUPTED_ERROR);
             }
         }
 
         System.exit(exitCode);
     }
-
-    /**
-     * Exit codes list:
-     *  (everything is OK: code = 0)
-     */
-    public static final int
-        SCREEN_IS_NULL_ERROR = 1,
-        CALCULATOR_IS_NULL_ERROR = 2,
-        OBJECTS_ARRAY_IS_NULL_ERROR = 3,
-        DECORATIONS_ARRAY_IS_NULL_ERROR = 4,
-        PLAYER_IS_NULL_ERROR = 5,
-        FILE_READING_ERROR = 6,
-        FILE_NOT_FOUND_ERROR = 7,
-        THREAD_WAS_INTERRUPTED_ERROR = 8;
 }

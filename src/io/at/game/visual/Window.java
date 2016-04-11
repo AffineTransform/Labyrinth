@@ -2,6 +2,7 @@ package io.at.game.visual;
 
 import javax.swing.JFrame;
 
+import io.at.game.ErrorCodes;
 import io.at.game.Game;
 
 /**
@@ -16,7 +17,7 @@ public class Window extends JFrame {
      */
     public Window(final Screen screen, final String title) {
         if (screen == null) {
-            Game.stop(Game.SCREEN_IS_NULL_ERROR);
+            Game.stop(ErrorCodes.SCREEN_IS_NULL_ERROR);
         } else {
             add(screen);
             setSize(screen.getSize());

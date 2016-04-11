@@ -1,5 +1,6 @@
 package io.at.game.visual;
 
+import io.at.game.ErrorCodes;
 import io.at.game.Game;
 import io.at.game.objects.Decoration;
 import io.at.game.objects.GameObject;
@@ -50,9 +51,9 @@ public class Screen extends Canvas {
             }
         } catch (NullPointerException e) {
             if (decorations == null) {
-                Game.stop(Game.DECORATIONS_ARRAY_IS_NULL_ERROR);
+                Game.stop(ErrorCodes.DECORATIONS_ARRAY_IS_NULL_ERROR);
             } else if (objects == null) {
-                Game.stop(Game.OBJECTS_ARRAY_IS_NULL_ERROR);
+                Game.stop(ErrorCodes.OBJECTS_ARRAY_IS_NULL_ERROR);
             }
         }
         g.setColor(Color.darkGray);
