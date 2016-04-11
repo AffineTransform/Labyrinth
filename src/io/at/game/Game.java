@@ -40,7 +40,6 @@ public final class Game implements Runnable {
         return loadedObjects.get(0);
     }
 
-
     private static boolean running;
     private static boolean paused; //TODO Pause
     private static int exitCode;
