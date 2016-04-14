@@ -92,15 +92,15 @@ public final class Game implements Runnable {
         try {
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    loadedDecorations.add(new Decoration(200 * i, 200 * j, "sprites/ground/grass_0.png"));
+                    loadedDecorations.add(new Decoration(200 * i, 200 * j, CLASS_PATH + "sprites/ground/grass_0.png"));
                 }
             }
             for (int i = 0; i < 1; i++) {
                 loadedObjects.add(new GameObject("Kant", i * 100, 0, 1, new String[]{
-                        "sprites/hero/hero_0.png",
-                        "sprites/hero/hero_1.png",
-                        "sprites/hero/hero_2.png",
-                        "sprites/hero/hero_3.png",
+                        CLASS_PATH + "sprites/hero/hero_0.png",
+                        CLASS_PATH + "sprites/hero/hero_1.png",
+                        CLASS_PATH + "sprites/hero/hero_2.png",
+                        CLASS_PATH + "sprites/hero/hero_3.png",
                 }));
             }
         } catch (FileNotFoundException e) {
