@@ -59,8 +59,8 @@ class MouseInput implements MouseListener, MouseMotionListener, Runnable {
 
         while (running) {
             //Rotating character
-            int heroCenterX = Game.player().getX() + Game.player().getWidth() / 2 + 1;
-            int heroCenterY = Game.player().getY() + Game.player().getHeight() / 2 + 1;
+            int heroCenterX = Game.player().getX() + Game.player().getCenterX();
+            int heroCenterY = Game.player().getY() + Game.player().getCenterY();
 
             if (mouseY < heroCenterY && mouseX == heroCenterX) {
                 Game.player().setAngle(Math.toRadians(0));

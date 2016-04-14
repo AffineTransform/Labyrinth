@@ -1,8 +1,6 @@
 package io.at.game;
 
-import io.at.game.ErrorCodes;
-import io.at.game.Game;
-import io.at.game.objects.CharacterConstants;
+import io.at.game.objects.ObjectsConstants;
 
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
@@ -41,48 +39,52 @@ class KeyInput implements KeyListener, Runnable {
         final int delay = 1000 / 60;
 
         while (running) {
-            if (keys.get(KeyEvent.VK_ESCAPE)) {
-                Game.switchPause();
-            }
-
             try {
-                if (!Game.isPaused()) {
+                //Hero sprint
+                if (keys.get(KeyEvent.VK_SHIFT)) {
+                    Game.player().setMaxMovingSpeed(ObjectsConstants.CHARACTER_RUN_MAX_SPEED);
+                } else {
+                    Game.player().setMaxMovingSpeed(ObjectsConstants.CHARACTER_WALKING_MAX_SPEED);
+                }
 
-                    //Accelerating y-axis
-                    if (keys.get(KeyEvent.VK_W) || keys.get(KeyEvent.VK_UP)) {
-                        Game.player().setAcceleration(Game.player().getAccelerationX(), -CharacterConstants.CHARACTER_RUN_ACCELERATION);
-                    } else if (keys.get(KeyEvent.VK_S) || keys.get(KeyEvent.VK_DOWN)) {
-                        Game.player().setAcceleration(Game.player().getAccelerationX(), CharacterConstants.CHARACTER_RUN_ACCELERATION);
+                if (Game.player().getZ() == ObjectsConstants.GROUND_LEVEL && keys.get(KeyEvent.VK_SPACE)) {
+                    Game.player().setSpeedZ(ObjectsConstants.CHARACTER_JUMP_SPEED);
+                }
 
-                        //Breaking y-axis
-                    } else if (Math.abs(Game.player().getSpeedY()) < CharacterConstants.CHARACTER_RUN_BREAKING) {
-                        Game.player().setAcceleration(Game.player().getAccelerationX(), 0);
-                        Game.player().setSpeed(Game.player().getSpeedX(), 0);
-                    } else if (Game.player().getSpeedY() > 0) {
-                        Game.player().setAcceleration(Game.player().getAccelerationX(), -CharacterConstants.CHARACTER_RUN_BREAKING);
-                    } else if (Game.player().getSpeedY() < 0) {
-                        Game.player().setAcceleration(Game.player().getAccelerationX(), CharacterConstants.CHARACTER_RUN_BREAKING);
-                    } else if (Game.player().getSpeedY() == 0) {
-                        Game.player().setAcceleration(Game.player().getAccelerationX(), 0);
-                    }
+                //Accelerating y-axis
+                if (keys.get(KeyEvent.VK_W) || keys.get(KeyEvent.VK_UP)) {
+                    Game.player().setAccelerationY(-ObjectsConstants.CHARACTER_RUN_ACCELERATION);
+                } else if (keys.get(KeyEvent.VK_S) || keys.get(KeyEvent.VK_DOWN)) {
+                    Game.player().setAccelerationY(ObjectsConstants.CHARACTER_RUN_ACCELERATION);
 
-                    //Accelerating x-axis
-                    if (keys.get(KeyEvent.VK_A) || keys.get(KeyEvent.VK_LEFT)) {
-                        Game.player().setAcceleration(-CharacterConstants.CHARACTER_RUN_ACCELERATION, Game.player().getAccelerationY());
-                    } else if (keys.get(KeyEvent.VK_D) || keys.get(KeyEvent.VK_RIGHT)) {
-                        Game.player().setAcceleration(CharacterConstants.CHARACTER_RUN_ACCELERATION, Game.player().getAccelerationY());
+                //Braking y-axis
+                } else if (Math.abs(Game.player().getSpeedY()) < ObjectsConstants.CHARACTER_RUN_BRAKING) {
+                    Game.player().setAccelerationY(0);
+                    Game.player().setSpeedY(0);
+                } else if (Game.player().getSpeedY() > 0) {
+                    Game.player().setAccelerationY(-ObjectsConstants.CHARACTER_RUN_BRAKING);
+                } else if (Game.player().getSpeedY() < 0) {
+                    Game.player().setAccelerationY(ObjectsConstants.CHARACTER_RUN_BRAKING);
+                } else if (Game.player().getSpeedY() == 0) {
+                    Game.player().setAccelerationY(0);
+                }
 
-                        //Breaking x-axis
-                    } else if (Math.abs(Game.player().getSpeedX()) < CharacterConstants.CHARACTER_RUN_BREAKING) {
-                        Game.player().setAcceleration(0, Game.player().getAccelerationY());
-                        Game.player().setSpeed(0, Game.player().getSpeedY());
-                    } else if (Game.player().getSpeedX() > 0) {
-                        Game.player().setAcceleration(-CharacterConstants.CHARACTER_RUN_BREAKING, Game.player().getAccelerationY());
-                    } else if (Game.player().getSpeedX() < 0) {
-                        Game.player().setAcceleration(CharacterConstants.CHARACTER_RUN_BREAKING, Game.player().getAccelerationY());
-                    } else if (Game.player().getSpeedX() == 0) {
-                        Game.player().setAcceleration(0, Game.player().getAccelerationY());
-                    }
+                //Accelerating x-axis
+                if (keys.get(KeyEvent.VK_A) || keys.get(KeyEvent.VK_LEFT)) {
+                    Game.player().setAccelerationX(-ObjectsConstants.CHARACTER_RUN_ACCELERATION);
+                } else if (keys.get(KeyEvent.VK_D) || keys.get(KeyEvent.VK_RIGHT)) {
+                    Game.player().setAccelerationX(ObjectsConstants.CHARACTER_RUN_ACCELERATION);
+
+                //Braking x-axis
+                } else if (Math.abs(Game.player().getSpeedX()) < ObjectsConstants.CHARACTER_RUN_BRAKING) {
+                    Game.player().setAccelerationX(0);
+                    Game.player().setSpeedX(0);
+                } else if (Game.player().getSpeedX() > 0) {
+                    Game.player().setAccelerationX(-ObjectsConstants.CHARACTER_RUN_BRAKING);
+                } else if (Game.player().getSpeedX() < 0) {
+                    Game.player().setAccelerationX(ObjectsConstants.CHARACTER_RUN_BRAKING);
+                } else if (Game.player().getSpeedX() == 0) {
+                    Game.player().setAccelerationX(0);
                 }
             } catch (NullPointerException e) {
                 Game.stop(ErrorCodes.PLAYER_IS_NULL_ERROR);

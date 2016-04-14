@@ -12,36 +12,48 @@ import java.io.IOException;
  */
 public class GameObject {
     private String name;
-    private int x, y, width, height;
-    private double speedX, speedY, accelerationX, accelerationY, angleRadians;
-    private Image sprite;
+    private int x, y, width, height, centerX, centerY, currentSpriteIndex;
+    private double z, speedX, speedY, speedZ, maxMovingSpeed, accelerationX, accelerationY, accelerationZ, angleRadians;
+    private Image[] sprites;
+
+    private AffineTransform at;
 
     /**
      * Constructor.
+     *
+     * Object coordinates:
+     * @param x - from left to right axis.
+     * @param y - from up to down axis.
+     * @param z - from screen to viewer axis.
+     *
+     * Other parameters:
      * @param name - object name.
-     * @param x - object coordinate.
-     * @param y - object coordinate.
-     * @param spritePath - image file directory path.
+     * @param spritePaths - array of sprites directory paths.
      * @throws IOException
      */
-    public GameObject(final String name, final int x, final int y, final String spritePath) throws IOException {
+    public GameObject(final String name, final int x, final int y, final int z, final String[] spritePaths) throws IOException {
         this.name = name;
         this.x = x;
         this.y = y;
-        speedX = 0;
-        speedY = 0;
-        accelerationX = 0;
-        accelerationY = 0;
-        angleRadians = 0;
+        this.z = ObjectsConstants.GROUND_LEVEL;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.speedZ = 0;
+        this.accelerationX = 0;
+        this.accelerationY = 0;
+        this.accelerationZ = 0;
+        this.angleRadians = 0;
 
-        this.sprite = ImageIO.read(new File(spritePath));
-        if (sprite != null) {
-            width = sprite.getWidth(null);
-            height = sprite.getHeight(null);
+        this.sprites = new Image[spritePaths.length];
+        for (int i = 0; i < sprites.length; i++) {
+            this.sprites[i] = ImageIO.read(new File(spritePaths[i]));
         }
+        this.width = sprites[0].getWidth(null);
+        this.height = sprites[0].getHeight(null);
+        this.currentSpriteIndex = 0;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
     public int getX() {
@@ -50,11 +62,20 @@ public class GameObject {
     public int getY() {
         return y;
     }
+    public double getZ() {
+        return z;
+    }
     public int getWidth() {
         return width;
     }
     public int getHeight() {
         return height;
+    }
+    public int getCenterX() {
+        return centerX;
+    }
+    public int getCenterY() {
+        return centerY;
     }
     public double getSpeedX() {
         return speedX;
@@ -62,40 +83,69 @@ public class GameObject {
     public double getSpeedY() {
         return speedY;
     }
+    public double getSpeedZ() {
+        return speedZ;
+    }
     public double getAccelerationX() {
         return accelerationX;
     }
     public double getAccelerationY() {
         return accelerationY;
     }
+    public double getAccelerationZ() {
+        return accelerationZ;
+    }
 
     /**
-     * @param vx - x speed.
-     * @param vy - y speed.
+     * @param z - coordinate.
      */
-    public void setSpeed(final double vx, final double vy) {
+    public void setZ(double z) {
+        this.z = z;
+    }
+    /**
+     * @param vx - x-axis speed.
+     */
+    public void setSpeedX(final double vx) {
         speedX = vx;
+    }
+    /**
+     * @param vy - y-axis speed.
+     */
+    public void setSpeedY(final double vy) {
         speedY = vy;
     }
     /**
-     * @param ax - x acceleration.
-     * @param ay - y acceleration.
+     * @param vz - z-axis speed.
      */
-    public void setAcceleration(final double ax, final double ay) {
+    public void setSpeedZ(final double vz) {
+        speedZ = vz;
+    }
+    /**
+     * @param maxMovingSpeed - maximal moving speed modulo.
+     */
+    public void setMaxMovingSpeed(final double maxMovingSpeed) {
+        this.maxMovingSpeed = maxMovingSpeed;
+    }
+    /**
+     * @param ax - x-axis acceleration.
+     */
+    public void setAccelerationX(final double ax) {
         accelerationX = ax;
+    }
+    /**
+     * @param ay - y-axis acceleration.
+     */
+    public void setAccelerationY(final double ay) {
         accelerationY = ay;
     }
-
     /**
-     * @param path - image directory path.
-     * @throws IOException
+     * @param az - z-axis acceleration.
      */
-    public void setImage(final String path) throws IOException {
-        sprite = ImageIO.read(new File(path));
+    public void setAccelerationZ(final double az) {
+        accelerationZ = az;
     }
-
     /**
-     * Set sprite angle of sprite rotation.
+     * Set sprite rotation angle.
      * @param radians - angle which the sprite is rotated relative y-axis clockwise.
      */
     public void setAngle(final double radians) {
@@ -108,23 +158,52 @@ public class GameObject {
     void move() {
         x += speedX;
         y += speedY;
+        z += speedZ;
     }
-
     /**
      * Accelerate object.
      */
     void accelerate() {
-        speedX += accelerationX;
-        speedY += accelerationY;
+        if (Math.abs(speedX + accelerationX) <= maxMovingSpeed) {
+            speedX += accelerationX;
+        } else if (speedX > maxMovingSpeed) {
+            speedX = maxMovingSpeed;
+        } else if (speedX < -maxMovingSpeed) {
+            speedX = -maxMovingSpeed;
+        }
+
+        if (Math.abs(speedY + accelerationY) <= maxMovingSpeed) {
+            speedY += accelerationY;
+        } else if (speedY > maxMovingSpeed) {
+            speedY = maxMovingSpeed;
+        } else if (speedY < -maxMovingSpeed) {
+            speedY = -maxMovingSpeed;
+        }
+
+        speedZ += accelerationZ;
     }
 
     /**
-     * Drawing object sprite on the screen.
+     * Switch to the next sprite.
+     */
+    public void nextSprite() {
+        if (currentSpriteIndex == sprites.length - 1) {
+            currentSpriteIndex = 0;
+        } else {
+            currentSpriteIndex++;
+        }
+    }
+    /**
+     * Draw object sprite on the screen.
      * @param g - Graphics object.
      */
     public void draw(final Graphics2D g) {
-        AffineTransform at = AffineTransform.getTranslateInstance(x, y);
-        at.rotate(angleRadians, width / 2 + 1, height / 2 + 1);
-        g.drawImage(sprite, at, null);
+        this.centerX = (int) (width * z / 2) + 1;
+        this.centerY = (int) (height * z / 2) + 1;
+
+        at = AffineTransform.getTranslateInstance(x - width * (z - 1) / 2, y - height * (z - 1) / 2);
+        at.rotate(angleRadians, centerX, centerY);
+        at.scale(z, z);
+        g.drawImage(sprites[currentSpriteIndex], at, null);
     }
 }

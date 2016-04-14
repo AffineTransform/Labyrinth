@@ -10,18 +10,24 @@ import java.io.IOException;
  */
 public class Decoration {
     private int x, y;
+    private double angleRadians;
     private Image sprite;
 
     /**
      * Decoration constructor.
-     * @param x - coordinate.
-     * @param y - coordinate.
+     *
+     * Object coordinates:
+     * @param x - from left to right axis.
+     * @param y - from up to down axis.
+     *
+     * Other parameters:
      * @param spritePath - sprite directory path.
      * @throws IOException
      */
     public Decoration(final int x, final int y, final String spritePath) throws IOException {
         this.x = x;
         this.y = y;
+        this.angleRadians = 0;
         sprite = ImageIO.read(new File(spritePath));
     }
 
@@ -30,6 +36,7 @@ public class Decoration {
      * @param g - graphics object.
      */
     public void draw(final Graphics2D g) {
+
         g.drawImage(sprite, x , y, null);
     }
 }

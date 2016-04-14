@@ -17,7 +17,7 @@ import java.util.Vector;
 public class Screen extends Canvas {
 
     /**
-     *
+     * Screen constructor.
      * @param width - screen width.
      * @param height - screen height.
      */
@@ -43,6 +43,7 @@ public class Screen extends Canvas {
         g.clearRect(0, 0, getWidth(), getHeight());
 
         try {
+            g.setColor(Color.red);
             for (Decoration d : decorations) {
                 d.draw(g);
             }
@@ -50,6 +51,7 @@ public class Screen extends Canvas {
                 o.draw(g);
             }
         } catch (NullPointerException e) {
+            //TODO figure out what's wrong
             if (decorations == null) {
                 Game.stop(ErrorCodes.DECORATIONS_ARRAY_IS_NULL_ERROR);
             } else if (objects == null) {

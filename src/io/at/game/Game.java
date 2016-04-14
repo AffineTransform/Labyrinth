@@ -1,5 +1,6 @@
 package io.at.game;
 
+import io.at.game.objects.AnimationCalculator;
 import io.at.game.objects.Decoration;
 import io.at.game.objects.DynamicsCalculator;
 import io.at.game.objects.GameObject;
@@ -28,7 +29,8 @@ public final class Game implements Runnable {
     private KeyInput keyInput;
     private MouseInput mouseInput;
     private Window window;
-    private DynamicsCalculator calculator;
+    private DynamicsCalculator dynamicsCalculator;
+    private AnimationCalculator animationCalculator;
     private static Vector<Decoration> loadedDecorations;
     private static Vector<GameObject> loadedObjects;
 
@@ -41,7 +43,6 @@ public final class Game implements Runnable {
     }
 
     private static boolean running;
-    private static boolean paused; //TODO Pause
     private static int exitCode;
 
     /**
@@ -53,7 +54,7 @@ public final class Game implements Runnable {
         if (exitCode == ErrorCodes.SCREEN_IS_NULL_ERROR) {
             System.err.println("Screen variable is null!");
         } else if (exitCode == ErrorCodes.CALCULATOR_IS_NULL_ERROR) {
-            System.err.println("Dynamics calculator is null!");
+            System.err.println("Dynamics dynamicsCalculator is null!");
         } else if (exitCode == ErrorCodes.OBJECTS_ARRAY_IS_NULL_ERROR) {
             System.err.println("Objects array is null!");
         } else if (exitCode == ErrorCodes.PLAYER_IS_NULL_ERROR) {
@@ -69,27 +70,10 @@ public final class Game implements Runnable {
     }
 
     /**
-     * Switch paused boolean to opposite value.
-     */
-    static void switchPause() {
-        paused = !paused;
-        if (paused) {
-            System.out.println("Paused!");
-        } else {
-            System.out.println("Unpaused!");
-        }
-    }
-
-    static boolean isPaused() {
-        return paused;
-    }
-
-    /**
      * Main constructor.
      */
     Game() {
         running = true;
-        paused = false;
         exitCode = ErrorCodes.EVERYTHING_IS_OK;
 
         keyInput = new KeyInput();
@@ -100,17 +84,25 @@ public final class Game implements Runnable {
         screen.addMouseMotionListener(mouseInput);
         window = new Window(screen, TITLE + " " + VERSION);
 
-        calculator = new DynamicsCalculator();
+        dynamicsCalculator = new DynamicsCalculator();
+        animationCalculator = new AnimationCalculator();
         loadedDecorations = new Vector<>();
         loadedObjects = new Vector<>();
 
         try {
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    loadedDecorations.add(new Decoration(200 * i, 200 * j, CLASS_PATH + "sprites/ground/grass_0.png"));
+                    loadedDecorations.add(new Decoration(200 * i, 200 * j, "sprites/ground/grass_0.png"));
                 }
             }
-            loadedObjects.add(new GameObject("Kant", 0, 0, CLASS_PATH + "sprites/hero/hero_0.png"));
+            for (int i = 0; i < 1; i++) {
+                loadedObjects.add(new GameObject("Kant", i * 100, 0, 1, new String[]{
+                        "sprites/hero/hero_0.png",
+                        "sprites/hero/hero_1.png",
+                        "sprites/hero/hero_2.png",
+                        "sprites/hero/hero_3.png",
+                }));
+            }
         } catch (FileNotFoundException e) {
             Game.stop(ErrorCodes.FILE_NOT_FOUND_ERROR);
         } catch (IOException e) {
@@ -131,13 +123,14 @@ public final class Game implements Runnable {
         while (running) {
 
             try {
-                calculator.calculate(loadedObjects);
+                dynamicsCalculator.calculate(loadedObjects);
+                animationCalculator.calculate(loadedObjects);
                 screen.render(mouseInput.getX(), mouseInput.getY(), loadedDecorations, loadedObjects);
 
             } catch (NullPointerException e) {
                 if (screen == null) {
                     stop(ErrorCodes.SCREEN_IS_NULL_ERROR);
-                } else if (calculator == null) {
+                } else if (dynamicsCalculator == null) {
                     stop(ErrorCodes.CALCULATOR_IS_NULL_ERROR);
                 } else if (loadedObjects == null) {
                     stop(ErrorCodes.OBJECTS_ARRAY_IS_NULL_ERROR);
